@@ -14,29 +14,44 @@ function App() {
   const [favoriteList, setFavoriteList] = useState([]);
   const [search, setSearch] = useState('');
 
+  //////////// Vou falar melhor na conversa ////////////
+  // const buildHash = (data) => {
+  //   let output = {};
+  //   for (let i = 0; i < data.length; i++) {
+  //     let currentId = data[i].id;
+  //     if (!output.hasOwnProperty(currentId))
+  //       output[currentId] = {
+  //         id: data[i].id,
+  //         name: data[i].name,
+  //         thumbnail: data[i].thumbnail,
+  //         isFav: false,
+  //       };
+  //   }
+  //   return output;
+  // };
+  //////////// ////////////////////////////////////
+
   // HandleClick //
   const handleFavoritesClick = (hero) => {
     if (!favoriteList.includes(hero)) {
       addFavorite(hero);
-      return;
+      return; // Não sei se o return era necessário mesmo.
     } else if (favoriteList.includes(hero)) {
       removeFavorite(hero);
-      return;
+      return; // Não sei se o return era necessário mesmo.
     }
   };
 
   // Criar função ADD //
   const addFavorite = (hero) => {
-    hero.isFav = true;
-    console.log(hero);
+    hero.isFav = true; // Se ao inves de array (heroData) eu tivesse um objeto. Adicionaria em todos os 'heros' já a chave isFav.
     const newFavorites = [...favoriteList, hero];
     setFavoriteList(newFavorites);
   };
 
   // Criar função REMOVE //
   const removeFavorite = (hero) => {
-    delete hero['isFav'];
-    console.log(hero);
+    delete hero['isFav']; // Deletei, porque se tivesse colocado para false, apenas os heroes que tivessem sido adicionados na lista teriam a chave isFav.
     const newFavorites = favoriteList.filter((fav) => fav.id !== hero.id);
     setFavoriteList(newFavorites);
   };
@@ -47,6 +62,7 @@ function App() {
         `https://gateway.marvel.com:443/v1/public/characters?ts=${time}&apikey=${publicKey}&hash=${hash}`
       )
       .then((res) => {
+        // buildHash(res.data.data.results); // Adicionei isso posteriormente pra mostrar como estava tentando fazer.
         setHeroData(res.data.data.results);
       })
       .catch((err) => console.log(err));
