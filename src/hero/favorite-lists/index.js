@@ -2,10 +2,10 @@ function favorites(favoriteLists) {
     function addFavorite(favoritesHash, heroId, listId) {
         if (favoritesHash.has(heroId)) {
             const currentLists = favoritesHash.get(heroId);
-            currentLists.add(id);
+            currentLists.add(listId);
             favoritesHash.set(heroId, currentLists);
         } else {
-            favoritesHash.set(heroId, new Set([id]));
+            favoritesHash.set(heroId, new Set([listId]));
         }
 
         return favoritesHash;

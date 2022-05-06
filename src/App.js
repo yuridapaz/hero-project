@@ -10,11 +10,12 @@ import { createHero } from "./hero";
 const CHUMBALIZED_LIST_ID = "My Favorites";
 
 function App() {
+    const favoritesRepository = createFavoriteRepository();
     const [heroes, setHeroes] = useState([]);
     const [favoriteLists, setFavoriteLists] = useState({});
     const [search, setSearch] = useState("");
     const marvelClient = createMarvelClient();
-    const favoritesRepository = createFavoriteRepository();
+
     const favoriteEditter = createFavoriteEditUseCase(
         favoritesRepository,
         favoriteLists
@@ -22,24 +23,28 @@ function App() {
 
     // HandleClick //
     const handleFavoritesClick = (hero) => {
-        if (!favoriteList.includes(hero)) {
-            const newLists = favoriteEditter.add(hero, CHUMBALIZED_LIST_ID);
+        if (!favoriteLists.isFavorite(hero)) {
+            const newLists = favoriteEditter.add(hero.id, CHUMBALIZED_LIST_ID);
             setFavoriteLists(newLists);
+            setHeroes([...heroes]);
             return;
         }
 
-        const newLists = removeFavorite(hero, CHUMBALIZED_LIST_ID);
+        const newLists = favoriteEditter.remove(hero.id, CHUMBALIZED_LIST_ID);
         setFavoriteLists(newLists);
+        setHeroes([...heroes]);
     };
 
-    useEffect(async () => {
-        const favoriteListData = favoritesRepository.getFavoriteLists();
-        favoriteLists = createFavorites(favoriteListData);
-        const heroes = await marvelClient
-            .getHeroes()
-            .map((heroData) => createHero(heroData));
-        setHeroes(heroes);
-        setFavoriteLists(favoriteLists);
+    useEffect(() => {
+        async function getFavoriteData() {
+            const favoriteListData = favoritesRepository.getFavoriteLists();
+            const heroesApiResult = await marvelClient.getHeroes();
+
+            setHeroes(heroesApiResult.map((heroData) => createHero(heroData)));
+            setFavoriteLists(createFavorites(favoriteListData));
+        }
+
+        getFavoriteData();
     }, []);
 
     return (
@@ -59,12 +64,12 @@ function App() {
                             <C.HeroCard
                                 key={hero.id}
                                 title={hero.name}
-                                imgSrc={hero.thumbnail.path}
+                                imgSrc={hero.imageSrc}
                                 onClick={() => handleFavoritesClick(hero)}
                                 btnText={
                                     favoriteLists.isFavorite(hero.id)
-                                        ? "Add"
-                                        : "Remove"
+                                        ? "Remove"
+                                        : "Add"
                                 }
                                 heartColor={
                                     favoriteLists.isFavorite(hero.id) && "red"

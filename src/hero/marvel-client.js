@@ -10,12 +10,12 @@ function validateEnv(envKey) {
 }
 
 function getApiKeys() {
-    validateEnv("MARVEL_API_PUBLIC_KEY");
-    validateEnv("MARVEL_API_PRIVATE_KEY");
+    validateEnv("REACT_APP_PUBLIC_KEY");
+    validateEnv("REACT_APP_PRIVATE_KEY");
 
     return {
-        publicKey: process.env.MARVEL_API_PUBLIC_KEY,
-        privateKey: process.env.MARVEL_API_PRIVATE_KEY,
+        publicKey: process.env.REACT_APP_PUBLIC_KEY,
+        privateKey: process.env.REACT_APP_PRIVATE_KEY,
     };
 }
 
@@ -28,7 +28,7 @@ function marvelClient() {
         getHeroes: async () => {
             try {
                 const apiResult = await axios.get(
-                    `https://gateway.marvel.com:443/v1/public/characters?ts=${time}&apikey=${PUBLIC_KEY}&hash=${hash}`
+                    `https://gateway.marvel.com:443/v1/public/characters?ts=${time}&apikey=${publicKey}&hash=${hash}`
                 );
                 return apiResult.data.data.results;
             } catch (err) {
